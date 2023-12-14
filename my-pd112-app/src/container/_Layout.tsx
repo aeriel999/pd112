@@ -1,12 +1,9 @@
 import {Breadcrumb, Layout, theme} from "antd";
-
 import DefaultHeader from "./_Header.tsx";
 import DefaultSider from "./_Sider.tsx";
 import {Outlet} from "react-router-dom";
 
 const { Content, Footer} = Layout;
-
-
 
 const DefaultLayout = () => {
     const {
@@ -31,7 +28,7 @@ const DefaultLayout = () => {
                     </Content>
                 </Layout>
             </Content>
-            <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+            <Footer style={{ textAlign: 'center', position: "fixed", bottom: "0", right: "0", left: "0"}}>Ant Design ©2023 Created by Ant UED</Footer>
         </Layout>
     )
 }
