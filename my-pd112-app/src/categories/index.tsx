@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Table, Divider } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import '/node_modules/antd/dist/reset.css';
-//import http_common from "../http_common.ts";
-import axios from "axios";
+import http_common from "../http_common.ts";
+//import axios from "axios";
 
 interface ICategoryItem {
-    key: React.Key;
     id: number;
     name: string;
     description: string;
@@ -31,9 +30,9 @@ export const fetchData = async () => {
     // eslint-disable-next-line no-useless-catch
     try {
 
-        //const response= await http_common.get("/api/categories");
-        const response= await axios.get("http://pd112.tanmos.com/api/categories");
-
+        const response= await http_common.get("/api/categories");
+        //const response= await axios.get("http://pd112.tanmos.com/api/categories");
+console.log(response.data);
 
         return response.data; // Optionally return the data
     } catch (error) {
@@ -70,6 +69,7 @@ const GetCategories: React.FC = () => {
     );
 
 };
+
 
 export default GetCategories;
 
