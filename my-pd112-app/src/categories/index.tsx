@@ -3,12 +3,18 @@ import { Table, Divider } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import '/node_modules/antd/dist/reset.css';
 import http_common from "../http_common.ts";
-//import axios from "axios";
+
+//const BASE_URL: string = import.meta.env.BASE_URL as string;
+
+//const imgURL = BASE_URL + "upload/150_";
+
+const imgURL = "http://pd112.tanmos.com/upload/150_";
 
 interface ICategoryItem {
     id: number;
     name: string;
     description: string;
+    image: string;
 }
 
 const columns: ColumnsType<ICategoryItem> = [
@@ -23,6 +29,13 @@ const columns: ColumnsType<ICategoryItem> = [
     {
         title: 'Description',
         dataIndex: 'description',
+    },
+    {
+        title: 'Image',
+        dataIndex: 'image',
+        render: (imageName: string) => (
+            <img src={`${imgURL}${imageName}`} alt="Category Image"  />
+        ),
     },
 ];
 
@@ -51,6 +64,7 @@ const GetCategories: React.FC = () => {
                 // Update the state with the fetched data
                 setData(fetchedData);
 
+
             // Do something with the data
             } catch (error) {
                 // Handle errors
@@ -69,7 +83,6 @@ const GetCategories: React.FC = () => {
     );
 
 };
-
 
 export default GetCategories;
 

@@ -23,3 +23,6 @@ Route::get('/categories', [CategoryController::class, 'getList']);
 Route::post('/addcategory', [CategoryController::class, 'insertData']);
 // routes/web.php or routes/api.php
 //Route::post('/api/addcategory', 'App\Http\Controllers\Api\CategoryController');
+
+//Route::post('/categories', [CategoryController::class, 'createImg']);
+
