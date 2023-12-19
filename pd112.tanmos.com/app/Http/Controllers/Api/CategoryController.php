@@ -21,7 +21,7 @@ class CategoryController extends Controller
         $inputs = $request->all();
         $image = $request->file("image");
 
-     //  \Log::info($inputs);
+      \Log::info($inputs);
 
         $imageName = uniqid().".webp";
         $sizes = [50,150,300,600,1200];
