@@ -13,5 +13,6 @@ class Categories extends Model
         "name",
         "image",
         "description",
+        "isImageReload"
     ];
 }

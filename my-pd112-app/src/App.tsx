@@ -3,6 +3,8 @@ import '/node_modules/antd/dist/reset.css';
 import DefaultLayout from "./container/_Layout.tsx"
 import GetCategories from "./categories";
 import AddCategory from "./categories/add_category.tsx";
+import EditCategory from "./categories/edit_category.tsx";
+
 
 
 function App() {
@@ -14,6 +16,8 @@ function App() {
                   <Route index element={<GetCategories />} />
                   <Route path="/home" element={<GetCategories/>}/>
                   <Route path="/categories/add" element={<AddCategory/>}/>
+                  <Route path="/categories/edit/:categoryId" element={<EditCategory/>}/>
+
               </Route>
           </Routes>
       </>

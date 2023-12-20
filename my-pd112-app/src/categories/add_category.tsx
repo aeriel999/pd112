@@ -6,6 +6,7 @@ import type {UploadChangeParam} from 'antd/es/upload';
 import type {RcFile, UploadFile, UploadProps} from 'antd/es/upload/interface';
 import http_common from "../http_common.ts";
 import {ICategoryCreate} from "./type.ts";
+import {customDividerStyle} from "./styles.ts";
 
 const AddCategory = () => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const AddCategory = () => {
         };
 
         try {
-            await http_common.post("/api/addcategory", model,{
+            await http_common.post("/api/categories/add", model,{
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -39,17 +40,12 @@ const AddCategory = () => {
     }
 
     const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
+        message.error('Failed:', errorInfo);
     };
 
     type FieldType = {
         name?: string;
         description?: string;
-    };
-
-    const customDividerStyle = {
-        borderTop: '2px solid #1890ff',
-        margin: '5px 0 50px 0',
     };
 
     const [loading, setLoading] = useState(false);

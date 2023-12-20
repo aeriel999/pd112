@@ -20,9 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/categories', [CategoryController::class, 'getList']);
-Route::post('/addcategory', [CategoryController::class, 'insertData']);
-// routes/web.php or routes/api.php
-//Route::post('/api/addcategory', 'App\Http\Controllers\Api\CategoryController');
+Route::post('/categories/add', [CategoryController::class, 'insertData']);
+Route::get('/categories/get/{id}', [CategoryController::class, 'getCategory']);
+Route::post('/categories/update/{id}', [CategoryController::class, 'updateCategory']);
+Route::post('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
 
-//Route::post('/categories', [CategoryController::class, 'createImg']);
+
 

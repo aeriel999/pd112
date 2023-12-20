@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {Table, Divider, Button} from 'antd';
+import {Table, Divider, Button, Popconfirm} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import '/node_modules/antd/dist/reset.css';
 import http_common from "../http_common.ts";
 import {ICategoryItem} from "./type.ts";
 import {useNavigate} from "react-router-dom";
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {deleteCategory} from "./api.tsx";
 
 const GetCategories: React.FC = () => {
     const navigate = useNavigate();
@@ -30,8 +32,51 @@ const GetCategories: React.FC = () => {
                 <img src={`${imgURL}${imageName}`} alt="Category Image"  />
             ),
         },
+        {
+            title: 'Edit',
+            dataIndex: 'edit',
+            render: (_, record) => (
+
+                <Button type="primary" onClick={() => handleEdit(record.id)} icon={<EditOutlined />}>
+                    Edit
+                </Button>
+
+            ),
+        },
+        {
+            title: 'Delete',
+            dataIndex: 'delete',
+            render: (_, record) => (
+                // <Button type="danger" onClick={() => handleDelete(record.id)}>
+                //     Delete
+                // </Button>
+
+        <Popconfirm
+            title="Are you sure to delete this category?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+        >
+            <Button icon={<DeleteOutlined />}>
+                Delete
+            </Button>
+        </Popconfirm>
+
+            ),
+        },
     ];
 
+    const handleEdit = (categoryId: number) => {
+        console.log('Edit category with id:', categoryId);
+        navigate(`/categories/edit/${categoryId}`);
+        // Navigate to the edit page or show a modal for editing
+    };
+
+    const handleDelete = (categoryId: number) => {
+        console.log('Delete category with id:', categoryId);
+        deleteCategory(categoryId);
+        navigate('/');
+    };
     const fetchData = async () => {
         // eslint-disable-next-line no-useless-catch
 
