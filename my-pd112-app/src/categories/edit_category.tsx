@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {fetchCategoryDetails, updateCategory} from './api';
 import {customDividerStyle} from "./styles.ts";
 import {Alert, Button, Divider, Form, Input, message, Upload} from "antd";
@@ -18,14 +18,13 @@ const EditCategory: React.FC = () => {
     const [errorMSG, setErrorMSG] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const BASE_URL: string = import.meta.env.VITE_API_URL as string;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategory = async () => {
             try {
                 // Fetch category details using the categoryId
                 const details = await fetchCategoryDetails(Number(categoryId));
-                console.error(' details:', details);
-
                 setCategoryDetails(details);
             } catch (error) {
                 // Handle error (e.g., redirect to an error page)
@@ -60,6 +59,7 @@ const EditCategory: React.FC = () => {
         try {
             // Perform the update using the updateCategory function (implement this)
             await updateCategory(Number(categoryId), model);
+            navigate("/");
             // Optionally, you can redirect to the category list or show a success message
         } catch (error) {
             // Handle error (e.g., show an error message)

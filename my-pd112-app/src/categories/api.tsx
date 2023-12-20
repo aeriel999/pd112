@@ -45,7 +45,6 @@ export async function deleteCategory(categoryId : number)
     try {
         const response = await http_common.post(`/api/categories/delete/${categoryId}`);
 
-
         if (response.status !== 200) {
             throw new Error(`Error: ${response.status}`);
         }

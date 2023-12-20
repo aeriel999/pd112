@@ -89,6 +89,8 @@ class CategoryController extends Controller
 
         if($isreload)
         {
+            $oldImageName = $category->image;
+
             $image = $request->file("image");
             $imageName = uniqid().".webp";
             $sizes = [50,150,300,600,1200];
@@ -104,6 +106,12 @@ class CategoryController extends Controller
                 // save modified image in new format
                 $path=public_path('upload/'.$fileSave);
                 $imageRead->toWebp()->save($path);
+
+                $oldImagePath = public_path('upload/' . $size . '_' . $oldImageName);
+
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
             }
 
             $category->image = $imageName;
@@ -121,6 +129,17 @@ class CategoryController extends Controller
     public function deleteCategory($idCategory)
     {
         $category = Categories::findOrFail($idCategory);
+
+        $ImageName = $category->image;
+
+        $sizes = [50,150,300,600,1200];
+        foreach ($sizes as $size) {
+           $imagePath = public_path('upload/' . $size . '_' . $ImageName);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
 
         // Check if the category exists
         if (!$category) {

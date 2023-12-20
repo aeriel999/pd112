@@ -72,10 +72,10 @@ const GetCategories: React.FC = () => {
         // Navigate to the edit page or show a modal for editing
     };
 
-    const handleDelete = (categoryId: number) => {
+    const  handleDelete = async (categoryId: number) => {
         console.log('Delete category with id:', categoryId);
-        deleteCategory(categoryId);
-        navigate('/');
+       await deleteCategory(Number(categoryId));
+        window.location.reload();
     };
     const fetchData = async () => {
         // eslint-disable-next-line no-useless-catch
