@@ -8,8 +8,6 @@ import type {RcFile, UploadFile, UploadProps} from "antd/es/upload/interface";
 import type {UploadChangeParam} from "antd/es/upload";
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 
-
-
 const EditCategory: React.FC = () => {
     const {categoryId} = useParams(); // Get the categoryId from the URL params
     const [categoryDetails, setCategoryDetails] = useState<any>(null);
@@ -29,18 +27,14 @@ const EditCategory: React.FC = () => {
             } catch (error) {
                 // Handle error (e.g., redirect to an error page)
                 console.error('Failed to fetch category details:', error);
+                throw error;
             }
         };
-
         fetchCategory();
     }, [categoryId]);
 
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("e.target.name", e.target.name);
-        console.log("e.target.value", e.target.value);
-
         setFormData((prevData: any) => ({...prevData, [e.target.name]: e.target.value}));
-
     };
 
     const handleFormSubmit = async ( ) => {

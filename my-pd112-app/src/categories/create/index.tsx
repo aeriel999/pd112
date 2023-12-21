@@ -4,9 +4,9 @@ import {useState} from "react";
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 import type {UploadChangeParam} from 'antd/es/upload';
 import type {RcFile, UploadFile, UploadProps} from 'antd/es/upload/interface';
-import http_common from "../http_common.ts";
 import {ICategoryCreate} from "./type.ts";
 import {customDividerStyle} from "./styles.ts";
+import {addCategory} from "./api.tsx";
 
 const AddCategory = () => {
     const navigate = useNavigate();
@@ -26,17 +26,21 @@ const AddCategory = () => {
             description: values.description,
         };
 
-        try {
-            await http_common.post("/api/categories/add", model,{
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            });
-            navigate("/");
-        }
-        catch (ex) {
-            message.error('Error in creating of category');
-        }
+        // try {
+        //     await http_common.post("/api/categories/add", model,{
+        //         headers: {
+        //             "Content-Type": "multipart/form-data"
+        //         }
+        //     });
+        //     navigate("/");
+        // }
+        // catch (ex) {
+        //     message.error('Error in creating of category');
+        // }
+
+        await addCategory(model);
+
+        navigate("/");
     }
 
     const onFinishFailed = (errorInfo: any) => {
