@@ -2,15 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {Table, Divider, Button, Popconfirm} from 'antd';
 import type {ColumnsType} from 'antd/es/table';
 import '/node_modules/antd/dist/reset.css';
-import {ICategoryItem} from "./type.ts";
+import {ICategoryItem} from "../type.ts";
 import {useNavigate} from "react-router-dom";
 import {EditOutlined, DeleteOutlined} from '@ant-design/icons';
-import {deleteCategory, fetchData} from "./api";
+import {deleteCategory, fetchData} from "../api";
 
 const GetCategories: React.FC = () => {
     const navigate = useNavigate();
     const BASE_URL: string = import.meta.env.VITE_API_URL as string;
     const imgURL = BASE_URL + "/upload/150_";
+
     const columns: ColumnsType<ICategoryItem> = [
         {
             title: 'Id',
@@ -68,7 +69,7 @@ const GetCategories: React.FC = () => {
 
     const handleDelete = async (categoryId: number) => {
         await deleteCategory(Number(categoryId));
-        window.location.reload();
+        setData(data.filter(x=>x.id != categoryId));
     };
 
     const [data, setData] = useState<ICategoryItem[]>([]);

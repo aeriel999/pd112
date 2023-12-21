@@ -4,15 +4,15 @@ import {useState} from "react";
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 import type {UploadChangeParam} from 'antd/es/upload';
 import type {RcFile, UploadFile, UploadProps} from 'antd/es/upload/interface';
-import {ICategoryCreate} from "./type.ts";
-import {customDividerStyle} from "./styles.ts";
-import {addCategory} from "./api.tsx";
+import {FieldType, ICategoryCreate} from "../type.ts";
+import {customDividerStyle} from "../styles.ts";
+import {addCategory} from "../api";
 
 const AddCategory = () => {
     const navigate = useNavigate();
     const [file, setFile] = useState<File | null>(null);
     const [errorMSG, setErrorMSG] = useState<string>("");
-
+    const [loading, setLoading] = useState(false);
     const onFinish = async (values: any) => {
 
         if(file==null) {
@@ -26,18 +26,6 @@ const AddCategory = () => {
             description: values.description,
         };
 
-        // try {
-        //     await http_common.post("/api/categories/add", model,{
-        //         headers: {
-        //             "Content-Type": "multipart/form-data"
-        //         }
-        //     });
-        //     navigate("/");
-        // }
-        // catch (ex) {
-        //     message.error('Error in creating of category');
-        // }
-
         await addCategory(model);
 
         navigate("/");
@@ -46,13 +34,6 @@ const AddCategory = () => {
     const onFinishFailed = (errorInfo: any) => {
         message.error('Failed:', errorInfo);
     };
-
-    type FieldType = {
-        name?: string;
-        description?: string;
-    };
-
-    const [loading, setLoading] = useState(false);
 
     const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
         if (info.file.status === 'uploading') {
@@ -79,10 +60,12 @@ const AddCategory = () => {
         if (!isImage) {
             message.error('Choose image!');
         }
-        const isLt2M = file.size / 1024 / 1024 < 10;
+
+        const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
             message.error('The file size should not exceed 2MB!');
         }
+
         return isImage && isLt2M;
     };
     return (

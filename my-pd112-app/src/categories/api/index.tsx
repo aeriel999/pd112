@@ -1,5 +1,5 @@
-import http_common from "../http_common.ts";
-import {ICategoryCreate, ICategoryEdit} from "./type.ts";
+import http_common from "../../http_common.ts";
+import {ICategoryCreate, ICategoryEdit} from "../type.ts";
 
 export  const fetchData = async () => {
     try {

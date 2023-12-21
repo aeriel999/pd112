@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import '/node_modules/antd/dist/reset.css';
 import DefaultLayout from "./container/_Layout.tsx"
-import GetCategories from "./categories";
-import AddCategory from "./categories/add_category.tsx";
-import EditCategory from "./categories/edit_category.tsx";
+import GetCategories from "./categories/getAll";
+import AddCategory from "./categories/create";
+import EditCategory from "./categories/update";
 
 
 

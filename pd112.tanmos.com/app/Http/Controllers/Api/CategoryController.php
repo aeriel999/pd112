@@ -11,100 +11,181 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class CategoryController extends Controller
 {
-    public function getList(){
-        $data =  Categories::all();
+    /**
+     * @OA\Get(
+     *     tags={"Category"},
+     *     path="/api/categories",
+     *     @OA\Response(response="200", description="List Categories.")
+     * )
+     */
+    public function getList()
+    {
+        $data = Categories::all();
 
-       return response()->json($data);
+        return response()->json($data);
     }
 
-    public  function insertData(Request $request)
+    /**
+     * @OA\Post(
+     *     tags={"Category"},
+     *     path="/api/categories/add",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"name","image","description"},
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="file",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                      property="description",
+     *                      type="string"
+     *                  )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Add Category.")
+     * )
+     */
+    public function insertData(Request $request)
     {
         $inputs = $request->all();
         $image = $request->file("image");
 
-      \Log::info($inputs);
+        //\Log::info($inputs);
 
-        $imageName = uniqid().".webp";
-        $sizes = [50,150,300,600,1200];
-        // create image manager with desired driver
+        $imageName = uniqid() . ".webp";
+        $sizes = [50, 150, 300, 600, 1200];
         $manager = new ImageManager(new Driver());
 
         foreach ($sizes as $size) {
-            $fileSave = $size."_".$imageName;
+            $fileSave = $size . "_" . $imageName;
             // read image from file system
             $imageRead = $manager->read($image);
             // resize image proportionally to 300px width
             $imageRead->scale(width: $size);
             // save modified image in new format
-            $path=public_path('upload/'.$fileSave);
+            $path = public_path('upload/' . $fileSave);
             $imageRead->toWebp()->save($path);
         }
+
         $inputs["image"] = $imageName;
+
         try {
             Categories::create($inputs);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
-        return response()->json(['message' => 'Data inserted successfully']);
+        return response()->json(['message' => 'Data inserted successfully'], 200);
     }
 
+    /**
+     * @OA\Get(
+     *     tags={"Category"},
+     *     path="/api/categories/get/{id}",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Ідентифікатор категорії",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="number",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="List Categories."),
+     * @OA\Response(
+     *    response=404,
+     *    description="Wrong id",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Sorry, wrong Category Id has been sent. Pls try another one.")
+     *        )
+     *     )
+     * )
+     */
     public function getCategory($idCategory)
     {
         try {
-            // Find the category by ID
             $category = Categories::findOrFail($idCategory);
-            // Return the category as a JSON response
+
             return response()->json($category);
         } catch (\Exception $e) {
-            // Handle the exception, for example, return an error response
             return response()->json(['error' => $e]);
         }
     }
 
+    /**
+     * @OA\Post(
+     *     tags={"Category"},
+     *     path="/api/categories/update/{id}",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Id of Category",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="number",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="file"
+     *                 ),
+     *               @OA\Property(
+     *                      property="description",
+     *                      type="strinfig"
+     *                  ),
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Add Category.")
+     * )
+     */
     public function updateCategory($idCategory, Request $request)
     {
-
-        // Find the category by ID
         $category = Categories::findOrFail($idCategory);
 
-        // Check if the category exists
         if (!$category) {
             return response()->json(['error' => 'Category not found'], 404);
         }
 
-        // Update category attributes
-        if($request->input('name') != null)
-        {
+        if ($request->input('name') != null) {
             $category->name = $request->input('name');
         }
-        if($request->input('description') != null)
-        {
+
+        if ($request->input('description') != null) {
             $category->description = $request->input('description');
         }
 
-        //check img for existing
-        $isreload = $request->input('isImageReload');
-
-        if($isreload)
-        {
+        if ($request->input('image') != null) {
             $oldImageName = $category->image;
 
             $image = $request->file("image");
-            $imageName = uniqid().".webp";
-            $sizes = [50,150,300,600,1200];
-            // create image manager with desired driver
+            $imageName = uniqid() . ".webp";
+            $sizes = [50, 150, 300, 600, 1200];
             $manager = new ImageManager(new Driver());
 
             foreach ($sizes as $size) {
-                $fileSave = $size."_".$imageName;
-                // read image from file system
+                $fileSave = $size . "_" . $imageName;
                 $imageRead = $manager->read($image);
-                // resize image proportionally to 300px width
                 $imageRead->scale(width: $size);
-                // save modified image in new format
-                $path=public_path('upload/'.$fileSave);
+                $path = public_path('upload/' . $fileSave);
                 $imageRead->toWebp()->save($path);
 
                 $oldImagePath = public_path('upload/' . $size . '_' . $oldImageName);
@@ -119,38 +200,60 @@ class CategoryController extends Controller
             $category->isImageReload = false;
         }
 
-        // Save the updated category
         $category->save();
 
-        // Optionally, you can return a response to the client
-        return response()->json(['message' => 'Category updated successfully']);
+        return response()->json(['message' => 'Category updated successfully'], 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/categories/delete/{id}",
+     *     tags={"Category"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Id of Category",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="number",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not found"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Not authorized"
+     *     )
+     * )
+     */
     public function deleteCategory($idCategory)
     {
         $category = Categories::findOrFail($idCategory);
 
-        $ImageName = $category->image;
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
 
-        $sizes = [50,150,300,600,1200];
+        $ImageName = $category->image;
+        $sizes = [50, 150, 300, 600, 1200];
         foreach ($sizes as $size) {
-           $imagePath = public_path('upload/' . $size . '_' . $ImageName);
+            $imagePath = public_path('upload/' . $size . '_' . $ImageName);
 
             if (file_exists($imagePath)) {
                 unlink($imagePath);
             }
         }
 
-        // Check if the category exists
-        if (!$category) {
-            return response()->json(['error' => 'Category not found'], 404);
-        }
-
-        // Delete the category
         $category->delete();
 
-        // Optionally, you can return a response to the client
-        return response()->json(['message' => 'Category deleted successfully']);
+        return response()->json(['message' => 'Category deleted successfully'], 200);
     }
 }
 

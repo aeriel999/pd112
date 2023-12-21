@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchCategoryDetails, updateCategory} from './api';
-import {customDividerStyle} from "./styles.ts";
+import {fetchCategoryDetails, updateCategory} from '../api';
+import {customDividerStyle} from "../styles.ts";
 import {Alert, Button, Divider, Form, Input, message, Upload} from "antd";
-import {FieldType, ICategoryEdit} from "./type.ts";
+import {FieldType, ICategoryEdit} from "../type.ts";
 import type {RcFile, UploadFile, UploadProps} from "antd/es/upload/interface";
 import type {UploadChangeParam} from "antd/es/upload";
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
@@ -20,14 +20,10 @@ const EditCategory: React.FC = () => {
 
     useEffect(() => {
         const fetchCategory = async () => {
-            try {
-                // Fetch category details using the categoryId
-                const details = await fetchCategoryDetails(Number(categoryId));
-                setCategoryDetails(details);
-            } catch (error) {
-                // Handle error (e.g., redirect to an error page)
-                console.error('Failed to fetch category details:', error);
-                throw error;
+            const details = await fetchCategoryDetails(Number(categoryId));
+            setCategoryDetails(details);
+            if (!categoryDetails) {
+                return <p>Loading...</p>;
             }
         };
         fetchCategory();
@@ -38,33 +34,16 @@ const EditCategory: React.FC = () => {
     };
 
     const handleFormSubmit = async ( ) => {
-        console.log("setFormData.name", formData.name);
-        console.log("setFormData.description", formData.description);
-        console.log("setFormData.isImageReload", formData.isImageReload);
-
         const model : ICategoryEdit = {
             name: formData.name,
             image: file,
             description: formData.description,
             isImageReload: formData.isImageReload
         };
-
-        console.log(" model", model);
-        try {
-            // Perform the update using the updateCategory function (implement this)
-            await updateCategory(Number(categoryId), model);
+        const result = await updateCategory(Number(categoryId), model);
+        if(result == 200)
             navigate("/");
-            // Optionally, you can redirect to the category list or show a success message
-        } catch (error) {
-            // Handle error (e.g., show an error message)
-            console.error('Failed to update category:', error);
-        }
     };
-
-    if (!categoryDetails) {
-        // Optionally, you can show a loading indicator or redirect to an error page
-        return <p>Loading...</p>;
-    }
 
     const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
         if (info.file.status === 'uploading') {
@@ -76,9 +55,6 @@ const EditCategory: React.FC = () => {
             setLoading(false);
             setFile(file);
             setErrorMSG("");
-            setFormData((prevData: any) => ({...prevData, isImageReload:true}));
-
-            console.log("setFormData.isImageReload", formData.isImageReload);
         }
     };
 
@@ -104,10 +80,10 @@ const EditCategory: React.FC = () => {
         }
         return isImage && isLt2M;
     };
+
     const defaultImage = BASE_URL + "/upload/150_" + categoryDetails.image;
 
     return (
-
         <>
             <Divider style={customDividerStyle}>Edit Category {categoryDetails.name}</Divider>
             {errorMSG && <Alert message={errorMSG} type='error'/>}
@@ -131,7 +107,6 @@ const EditCategory: React.FC = () => {
                         onChange={handleFormChange}
                     />
                 </Form.Item>
-
                 <Upload
                     name="avatar"
                     listType="picture-card"
@@ -154,7 +129,6 @@ const EditCategory: React.FC = () => {
                         </>
                     )}
                 </Upload>
-
                 <Form.Item<FieldType>
                     label="Description"
                    // name="description"
@@ -167,7 +141,6 @@ const EditCategory: React.FC = () => {
                         onChange={handleFormChange}
                     />
                 </Form.Item>
-
                 <Form.Item wrapperCol={{offset: 8, span: 16}}>
                     <Button type="primary" htmlType="submit">
                         Submit
@@ -175,7 +148,6 @@ const EditCategory: React.FC = () => {
                 </Form.Item>
             </Form>
         </>
-
     );
 };
 
