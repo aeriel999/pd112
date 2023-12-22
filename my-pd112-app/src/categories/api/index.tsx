@@ -15,32 +15,30 @@ export  const fetchData = async () => {
 };
 
 export async function addCategory(model: ICategoryCreate)  {
+
     try {
-        const response = await http_common.post("/api/categories/add", model,{
+        const response =  await http_common.post("/api/categories/add", model,{
             headers: {
                 "Content-Type": "multipart/form-data"
             }
         });
         return response.status;
+    } catch (error : any) {
+        return error.response.data.message;
     }
-    catch (error) {
-        throw error;
-    }
+
+
 }
 export async function fetchCategoryDetails(categoryId: number)  {
     try {
         const response = await http_common.get(`/api/categories/get/${categoryId}`);
         return response.data;
-    } catch (error) {
-        console.error('Error fetching category details:', error);
-        throw error;
+    } catch (error : any) {
+        return error.response.data.message;
     }
 }
 
 export async function updateCategory(categoryId : number, fetchCat : ICategoryEdit) {
-    console.log("categoryId", categoryId);
-
-    console.log("fetchCat", fetchCat);
     try {
         const response = await http_common.post(`/api/categories/update/${categoryId}`, fetchCat,{
                 headers: {
@@ -48,15 +46,9 @@ export async function updateCategory(categoryId : number, fetchCat : ICategoryEd
                 }
             }
         );
-
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        // Assuming the response data is in JSON format
         return response.status;
-    } catch (error) {
-        console.error('Error fetching category details:', error);
-        throw error;
+    } catch (error : any) {
+        return error.response.data.message;
     }
 }
 

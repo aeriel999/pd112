@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use Faker\Core\Number;
 use Illuminate\Http\Request;
+use ValidationException;
+use Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+
 
 class CategoryController extends Controller
 {
@@ -55,6 +58,22 @@ class CategoryController extends Controller
     public function insertData(Request $request)
     {
         $inputs = $request->all();
+
+        $rules = [
+            'name' => 'required|string|max:255|min:3|unique:categories',
+            'description' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ];
+
+        try {
+            $validator = Validator::make($request->all(), $rules);
+            $validator->validate();
+        } catch (ValidationException $e) {
+            $errorMessages = $e->validator->getMessageBag()->toArray();
+
+            return response()->json(['error' => $errorMessages], 422);
+        }
+
         $image = $request->file("image");
 
         //\Log::info($inputs);
@@ -163,6 +182,21 @@ class CategoryController extends Controller
 
         if (!$category) {
             return response()->json(['error' => 'Category not found'], 404);
+        }
+
+        $rules = [
+            'name' => 'string|max:255|min:3|unique:categories',
+            'description' => 'string',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ];
+
+        try {
+            $validator = Validator::make($request->all(), $rules);
+            $validator->validate();
+        } catch (ValidationException $e) {
+            $errorMessages = $e->validator->getMessageBag()->toArray();
+
+            return response()->json(['error' => $errorMessages], 422);
         }
 
         if ($request->input('name') != null) {

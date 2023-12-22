@@ -1,4 +1,4 @@
-import {Button, Divider, Form, Input, Upload, message, Alert} from "antd";
+import {Button, Divider, Form, Input, Upload, Alert} from "antd";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
@@ -26,13 +26,18 @@ const AddCategory = () => {
             description: values.description,
         };
 
-        await addCategory(model);
+       const response =  await addCategory(model);
 
-        navigate("/");
+       if(response == 200){
+           navigate("/");
+       }else{
+           setErrorMSG(response);
+       }
+
     }
 
     const onFinishFailed = (errorInfo: any) => {
-        message.error('Failed:', errorInfo);
+        setErrorMSG(errorInfo.message)
     };
 
     const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
@@ -58,12 +63,12 @@ const AddCategory = () => {
     const beforeUpload = (file: RcFile) => {
         const isImage = /^image\/\w+/.test(file.type);
         if (!isImage) {
-            message.error('Choose image!');
+            setErrorMSG('Choose image!');
         }
 
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
-            message.error('The file size should not exceed 2MB!');
+            setErrorMSG('The file size should not exceed 2MB!');
         }
 
         return isImage && isLt2M;
