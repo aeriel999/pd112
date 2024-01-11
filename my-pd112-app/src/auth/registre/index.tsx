@@ -1,27 +1,26 @@
-import {Button, Divider, Form, Input, Upload, Alert} from "antd";
+import {Button, Divider, Form, Input, Upload, Alert, Modal} from "antd";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
-import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
-import type {UploadChangeParam} from 'antd/es/upload';
-import type {RcFile, UploadFile, UploadProps} from 'antd/es/upload/interface';
+import { PlusOutlined} from '@ant-design/icons';
 import {IRegister} from "../type.ts";
-import {FieldType, ICategoryCreate} from "../../categories/type.ts";
+import {FieldType} from "../../categories/type.ts";
 import http_common from "../../http_common.ts";
 import {customDividerStyle} from "../../categories/styles.ts";
-// import {FieldType, ICategoryCreate} from "../type.ts";
-// import {customDividerStyle} from "../styles.ts";
-// import {addCategory} from "../api";
+import {imageConverter} from "../../interfaces/forms";
+import {RcFile, UploadFile, UploadProps} from "antd/es/upload/interface";
 
-const Registre = () => {
+const Register = () => {
     const navigate = useNavigate();
-    const [file, setFile] = useState<File | null>(null);
+    const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [file, setFile] = useState<UploadFile | null>();
     const [errorMSG, setErrorMSG] = useState<string>("");
-    const [loading, setLoading] = useState(false);
 
     async function createUser(model: IRegister) {
 
         try {
-            const response = await http_common.post("/api/categories/add", model, {
+            const response = await http_common.post("/api/register", model, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -30,8 +29,6 @@ const Registre = () => {
         } catch (error: any) {
             return error.response.data.message;
         }
-
-
     }
 
     const onFinish = async (values: any) => {
@@ -60,58 +57,82 @@ const Registre = () => {
         setErrorMSG(errorInfo.message)
     };
 
-    const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
+    const handleCancel = () => setPreviewOpen(false);
+    const handlePreview = async (file: UploadFile) => {
+        if (!file.url && !file.preview) {
+            file.preview = URL.createObjectURL(file.originFileObj as RcFile);
         }
-        if (info.file.status === 'done') {
-            const file = info.file.originFileObj as File;
-            setLoading(false);
-            setFile(file);
-            setErrorMSG("");
-        }
+
+        setPreviewImage(file.url || (file.preview as string));
+        setPreviewOpen(true);
+        setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
     };
 
-    const uploadButton = (
-        <div>
-            {loading ? <LoadingOutlined/> : <PlusOutlined/>}
-            <div style={{marginTop: 8}}>Upload</div>
-        </div>
-    );
-
-    const beforeUpload = (file: RcFile) => {
-        const isImage = /^image\/\w+/.test(file.type);
-        if (!isImage) {
-            setErrorMSG('Choose image!');
-        }
-
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            setErrorMSG('The file size should not exceed 2MB!');
-        }
-
-        return isImage && isLt2M;
+    const handleChange: UploadProps['onChange'] = ({fileList: newFile}) => {
+        const newFileList = newFile.slice(-1);
+        setFile(newFileList[0]);
     };
+
+
     return (
         <>
-            <Divider style={customDividerStyle}>Add New Category</Divider>
+            <Divider style={customDividerStyle}>Registration</Divider>
             {errorMSG && <Alert message={errorMSG} type='error'/>}
             <Form
                 name="basic"
-                style={{maxWidth: 1000}}
+                labelCol={{
+                    span: 8,
+                }}
+                wrapperCol={{
+                    span: 16,
+                }}
+                style={{
+                    maxWidth: 800,
+                }}
                 initialValues={{remember: true}}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
                 <Form.Item<FieldType>
-                    label="Category name"
+                    label="Ім'я"
                     name="name"
-                    rules={[{required: true, message: 'Please input category name!'}]}
+                    rules={[
+                        {required: true, message: 'Це поле є обов\'язковим!'},
+                        {min: 2, message: 'Ім\'я повинна містити мінімум 2 символи!'}
+                    ]}
                 >
                     <Input/>
                 </Form.Item>
+
+                <Form.Item
+                    label="Прізвище"
+                    name="lastName"
+                    htmlFor="lastName"
+                    rules={[
+                        {required: true, message: 'Це поле є обов\'язковим!'},
+                        {min: 2, message: 'Прізвище повинна містити мінімум 2 символи!'}
+                    ]}
+                >
+                    <Input autoComplete="lastName"/>
+                </Form.Item>
+
+                <Form.Item
+                    label="Електронна пошта"
+                    name="email"
+                    htmlFor="email"
+                    rules={[
+                        {
+                            type: 'email',
+                            message: 'Формати пошти не правильний!',
+                        },
+                        {required: true, message: 'Це поле є обов\'язковим!'},
+                        {min: 2, message: 'Пошта повинна містити мінімум 2 символи!'}
+                    ]}
+                >
+                    <Input autoComplete="email" />
+                </Form.Item>
+
 
                 <Form.Item
                     label="Фото"
@@ -135,17 +156,55 @@ const Registre = () => {
                         }
                     </Upload>
                 </Form.Item>
-                <Form.Item<FieldType>
-                    label="Description"
-                    name="description"
+                <Form.Item
+                    label="phone"
+                    name="phone"
                     rules={[{required: true, message: 'Please input description!'}]}
                 >
                     <Input/>
                 </Form.Item>
 
+                <Form.Item
+                    name="password"
+                    label="Пароль"
+                    rules={[
+                        { required: true, message: 'Вкажіть Ваш пароль!', },
+                        { min: 6, message: 'Пароль має мати мінімум 6 символів!', },
+                    ]}
+                    hasFeedback
+                >
+                    <Input.Password/>
+                </Form.Item>
+
+                <Form.Item
+                    name="confirm"
+                    label="Повторіть Пароль"
+                    dependencies={['password']}
+                    hasFeedback
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Будь-ласка підтвердіть пароль!',
+                        },
+                        ({getFieldValue}) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Пароль не співпадають!'));
+                            },
+                        }),
+                    ]}
+                >
+                    <Input.Password/>
+                </Form.Item>
+
+                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                    <img alt="example" style={{width: '100%'}} src={previewImage}/>
+                </Modal>
                 <Form.Item wrapperCol={{offset: 8, span: 16}}>
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        Register
                     </Button>
                 </Form.Item>
             </Form>
@@ -153,4 +212,4 @@ const Registre = () => {
     );
 }
 
-export default Registre;
+export default Register;

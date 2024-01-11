@@ -145,10 +145,10 @@ class AuthController extends Controller
         $base64Image = $request->input('image');
 
         // Remove the "data:image/png;base64," prefix from the base64 string
-        $base64Image = preg_replace('/^data:image\/(png|jpeg|jpg);base64,/', '', $base64Image);
+       // $base64Image = preg_replace('/^data:image\/(png|jpeg|jpg);base64,/', '', $base64Image);
 
         // Decode the base64 string
-        $imageData = base64_decode($base64Image);
+       // $imageData = base64_decode($base64Image);
 
         $imageName = uniqid().".webp";
         $sizes = [150,300,600];
@@ -157,7 +157,7 @@ class AuthController extends Controller
         $manager = new ImageManager($driver);
         foreach ($sizes as $size) {
             $fileSave = $size."_".$imageName;
-            $image = $manager->read($imageData);
+            $image = $manager->read($base64Image);
             //$imageRead = Image::make($imageData);
             $image->scale(width: $size);
             $path=public_path('upload/'.$fileSave);
@@ -172,7 +172,7 @@ class AuthController extends Controller
             return response()->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json(['message' => 'Data inserted successfully'], Response::HTTP_OK);
+        return response()->json(['user' => $inputs], Response::HTTP_OK);
 
     }
 }

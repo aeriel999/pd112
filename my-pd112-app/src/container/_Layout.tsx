@@ -28,7 +28,7 @@ const DefaultLayout = () => {
                     </Content>
                 </Layout>
             </Content>
-            <Footer style={{ textAlign: 'center', position: "fixed", bottom: "0", right: "0", left: "0"}}>Ant Design ©2023 Created by Ant UED</Footer>
+            <Footer style={{ textAlign: 'center', bottom: "0", right: "0", left: "0"}}>Ant Design ©2023 Created by Ant UED</Footer>
         </Layout>
     )
 }
