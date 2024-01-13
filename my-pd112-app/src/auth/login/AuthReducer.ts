@@ -9,13 +9,13 @@ export interface IAuthReducerState {
     user: IUser|null
 }
 
-
-
 const initState: IAuthReducerState = {
     isAuth: false,
     user: null
 }
 
+//HW
+//Change the state accordingly to action (Action tell reducer what to do and reducer updates the state)
 const AuthReducer = (state = initState, action: any) : IAuthReducerState => {
     switch (action.type) {
         case AuthReducerActionType.LOGIN_USER: {

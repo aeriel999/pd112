@@ -98,36 +98,36 @@ const Register = () => {
                     label="Ім'я"
                     name="name"
                     rules={[
-                        {required: true, message: 'Це поле є обов\'язковим!'},
-                        {min: 2, message: 'Ім\'я повинна містити мінімум 2 символи!'}
+                        {required: true, message: 'It is required field'},
+                        {min: 2, message: 'Name must be at least 2 symbols!'}
                     ]}
                 >
                     <Input/>
                 </Form.Item>
 
                 <Form.Item
-                    label="Прізвище"
+                    label="lastName"
                     name="lastName"
                     htmlFor="lastName"
                     rules={[
-                        {required: true, message: 'Це поле є обов\'язковим!'},
-                        {min: 2, message: 'Прізвище повинна містити мінімум 2 символи!'}
+                        {required: true, message: 'It is required field'},
+                        {min: 2, message: 'Lastname must be at least 2 symbols!'}
                     ]}
                 >
                     <Input autoComplete="lastName"/>
                 </Form.Item>
 
                 <Form.Item
-                    label="Електронна пошта"
+                    label="Email"
                     name="email"
                     htmlFor="email"
                     rules={[
                         {
                             type: 'email',
-                            message: 'Формати пошти не правильний!',
+                            message: 'Mail formats are not correct!',
                         },
-                        {required: true, message: 'Це поле є обов\'язковим!'},
-                        {min: 2, message: 'Пошта повинна містити мінімум 2 символи!'}
+                        {required: true, message: 'It is required field'},
+                        {min: 2, message: 'Email must be at least 2 symbols!'}
                     ]}
                 >
                     <Input autoComplete="email" />
@@ -135,7 +135,7 @@ const Register = () => {
 
 
                 <Form.Item
-                    label="Фото"
+                    label="Image"
                     name={"image"}
                     getValueFromEvent={imageConverter}
                 >
@@ -157,19 +157,22 @@ const Register = () => {
                     </Upload>
                 </Form.Item>
                 <Form.Item
-                    label="phone"
+                    label="Phone"
                     name="phone"
-                    rules={[{required: true, message: 'Please input description!'}]}
+                    rules={[
+                        {required: true, message: 'It is required field'},
+                        {min: 2, message: 'Phone must be at least 11 symbols!'}
+                    ]}
                 >
                     <Input/>
                 </Form.Item>
 
                 <Form.Item
                     name="password"
-                    label="Пароль"
+                    label="Password"
                     rules={[
-                        { required: true, message: 'Вкажіть Ваш пароль!', },
-                        { min: 6, message: 'Пароль має мати мінімум 6 символів!', },
+                        { required: true, message: 'Enter your password!', },
+                        { min: 6, message: 'Password must be at least 6 symbols!', },
                     ]}
                     hasFeedback
                 >
@@ -178,20 +181,20 @@ const Register = () => {
 
                 <Form.Item
                     name="confirm"
-                    label="Повторіть Пароль"
+                    label="Confirm password"
                     dependencies={['password']}
                     hasFeedback
                     rules={[
                         {
                             required: true,
-                            message: 'Будь-ласка підтвердіть пароль!',
+                            message: 'Pleas confirm password!',
                         },
                         ({getFieldValue}) => ({
                             validator(_, value) {
                                 if (!value || getFieldValue('password') === value) {
                                     return Promise.resolve();
                                 }
-                                return Promise.reject(new Error('Пароль не співпадають!'));
+                                return Promise.reject(new Error('Passwords are not matched!'));
                             },
                         }),
                     ]}

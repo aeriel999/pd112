@@ -1,8 +1,8 @@
 import {Avatar, Button,  Layout, Menu} from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {useUser} from "../auth/login/AuthContext.tsx";
-// import {useDispatch, useSelector} from "react-redux";
-// // import {AuthReducerActionType, IAuthReducerState} from "../auth/login/AuthReducer.ts";
+//import {useUser} from "../auth/login/AuthContext.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {AuthReducerActionType, IAuthReducerState} from "../auth/login/AuthReducer.ts";
 
 const { Header } = Layout;
 
@@ -17,11 +17,13 @@ const ButtonStyle = {
     margin: '0 10px 0 0',
 };
 const DefaultHeader = () => {
-    const location = useLocation(); // Use useLocation to get the current location
+    const location = useLocation();
     const navigateTo = useNavigate();
-    const { user, logoutUser  } = useUser();
-    // const {isAuth, user} = useSelector((redux: any)=>redux.auth as IAuthReducerState);
-    // const dispatch = useDispatch();
+   // const { user, logoutUser  } = useUser();
+    //HW
+    //Get the state
+    const {isAuth, user} = useSelector((redux: any)=>redux.auth as IAuthReducerState);
+    const dispatch = useDispatch();
     const BASE_URL: string = import.meta.env.VITE_API_URL as string;
     const avatarUrl = BASE_URL + "/upload/150_" + user?.image;
 
@@ -31,12 +33,13 @@ const DefaultHeader = () => {
     };
 
     const handleLogOutClick = () => {
-        // Navigate to the login form when the button is clicked
-        // dispatch({
-        //     type: AuthReducerActionType.LOGOUT_USER,
-        // });
-        logoutUser();
-        // localStorage.removeItem("token");
+        //HW
+        //Get the info about new state in response to action and  send it to reducer for changing a state
+        dispatch({
+            type: AuthReducerActionType.LOGOUT_USER,
+        });
+       // logoutUser();
+         localStorage.removeItem("token");
          navigateTo('/')
     };
 
@@ -60,43 +63,41 @@ const DefaultHeader = () => {
                 ))}
             </Menu>
 
-            {/*{!isAuth ?*/}
-            {/*    (*/}
-            {/*        <>*/}
-            {/*        <Button style={ButtonStyle} onClick={handleSignInClick}>*/}
-            {/*            Sign-In*/}
-            {/*        </Button>*/}
-            {/*    <Button onClick={handleRegisterClick}>Register</Button>*/}
-            {/*    </>*/}
-            {/*    ) :*/}
-            {/*    <>*/}
-
-            {/*        /!*<Avatar size="small" src={user.image} alt={user.email} />*!/*/}
-            {/*        <span style={{ marginRight: 10, color: "white" }}>{user?.email}</span>*/}
-            {/*        <Button style={ButtonStyle} onClick={handleLogOutClick}>*/}
-            {/*            LogOut*/}
-            {/*        </Button>*/}
-            {/*    </>*/}
-
-
-            {/*}*/}
-
-            {user ? (
+            {!isAuth ?
+                (
+                    <>
+                    <Button style={ButtonStyle} onClick={handleSignInClick}>
+                        Sign-In
+                    </Button>
+                <Button onClick={handleRegisterClick}>Register</Button>
+                </>
+                ) :
                 <>
-                    <Avatar size="large" src={avatarUrl} alt={user.email} />
-                    <span style={{ marginRight: 10, marginLeft: 10,color: 'white' }}>{user.email}</span>
+                    <Avatar size="large" src={avatarUrl} alt={user?.email} />
+                    <span style={{ marginRight: 10, marginLeft: 10, color: "white" }}>{user?.email}</span>
                     <Button style={ButtonStyle} onClick={handleLogOutClick}>
                         LogOut
                     </Button>
                 </>
-            ) : (
-                <>
-                    <Button style={ButtonStyle} onClick={handleSignInClick}>
-                        Sign-In
-                    </Button>
-                    <Button onClick={handleRegisterClick}>Register</Button>
-                </>
-            )}
+            }
+            {/*}*/}
+
+            {/*{user ? (*/}
+            {/*    <>*/}
+            {/*        <Avatar size="large" src={avatarUrl} alt={user.email} />*/}
+            {/*        <span style={{ marginRight: 10, marginLeft: 10,color: 'white' }}>{user.email}</span>*/}
+            {/*        <Button style={ButtonStyle} onClick={handleLogOutClick}>*/}
+            {/*            LogOut*/}
+            {/*        </Button>*/}
+            {/*    </>*/}
+            {/*) : (*/}
+            {/*    <>*/}
+            {/*        <Button style={ButtonStyle} onClick={handleSignInClick}>*/}
+            {/*            Sign-In*/}
+            {/*        </Button>*/}
+            {/*        <Button onClick={handleRegisterClick}>Register</Button>*/}
+            {/*    </>*/}
+            {/*)}*/}
         </Header>
     );
 };

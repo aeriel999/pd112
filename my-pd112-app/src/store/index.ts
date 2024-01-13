@@ -7,6 +7,8 @@ export const rootReducer = combineReducers({
     auth: AuthReducer
 });
 
+//HW
+//store is the place we save the state
 export  const  store = configureStore({
     reducer: rootReducer,
     devTools: true,

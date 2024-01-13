@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,8 +27,11 @@ Route::get('/categories/get/{id}', [CategoryController::class, 'getCategory']);
 Route::post('/categories/update/{id}', [CategoryController::class, 'updateCategory']);
 Route::post('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
 
+Route::get('/products', [ProductController::class, 'getList']);
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
 
 
 
