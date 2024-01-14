@@ -28,6 +28,7 @@ Route::post('/categories/update/{id}', [CategoryController::class, 'updateCatego
 Route::post('/categories/delete/{id}', [CategoryController::class, 'deleteCategory']);
 
 Route::get('/products', [ProductController::class, 'getList']);
+Route::post('/products/add', [ProductController::class, 'createProduct']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);

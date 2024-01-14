@@ -79,7 +79,7 @@ class CategoryController extends Controller
         //\Log::info($inputs);
 
         $imageName = uniqid() . ".webp";
-        $sizes = [50, 150, 300, 600, 1200];
+        $sizes = [150, 300, 600, 1200];
         $manager = new ImageManager(new Driver());
 
         foreach ($sizes as $size) {

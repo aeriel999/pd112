@@ -151,7 +151,7 @@ class AuthController extends Controller
        // $imageData = base64_decode($base64Image);
 
         $imageName = uniqid().".webp";
-        $sizes = [150,300,600];
+        $sizes = [50,150,300];
         // create image manager with desired driver
         $driver = new  Driver();
         $manager = new ImageManager($driver);

@@ -194,6 +194,56 @@
                 }
             }
         },
+        "/api/products/add": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "b7488b2a936e290b3433d32c97ca4d83",
+                "requestBody": {
+                    "description": "Product information",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "quantity": {
+                                        "type": "number"
+                                    },
+                                    "category_id": {
+                                        "type": "integer"
+                                    },
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product created successfully."
+                    },
+                    "422": {
+                        "description": "Validation error or invalid input."
+                    }
+                }
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
